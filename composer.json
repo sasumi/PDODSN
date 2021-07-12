@@ -23,14 +23,13 @@
   },
   "autoload": {
 	"psr-4": {
-	  "LFPhp\\PDODSN\\": "src/",
-	  "LFPhp\\PDODSN\\test\\": "tests/"
+	  "LFPhp\\PDODSN\\": "src/"
 	}
   },
   "autoload-dev": {
 	"psr-4": {
 	  "LFPhp\\PDODSN\\": "src/",
-	  "LFPhp\\PDODSN\\test\\": "tests/"
+	  "LFPhp\\PDODSN\\tests\\": "tests/"
 	}
   },
   "repositories": {

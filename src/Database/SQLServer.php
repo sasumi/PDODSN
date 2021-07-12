@@ -19,12 +19,11 @@ class SQLServer extends DSN {
 	public $trust_server_certificate;
 	public $wsid;
 
-	protected static function getDSNPrefix(){
+	public static function getDSNPrefix(){
 		return 'sqlsrv';
 	}
 
-	protected static function resolveSegment($segment){
-
+	public static function resolveSegment($segment){
 	}
 
 	public function __toString(){

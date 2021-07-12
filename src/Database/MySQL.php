@@ -1,5 +1,6 @@
 <?php
 namespace LFPhp\PDODSN\Database;
+
 use Exception;
 use LFPhp\PDODSN\DSN;
 
@@ -53,7 +54,7 @@ class MySQL extends DSN {
 		return $dsn_obj;
 	}
 
-	protected static function getDSNPrefix(){
+	public static function getDSNPrefix(){
 		return 'mysql';
 	}
 

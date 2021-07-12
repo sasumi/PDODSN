@@ -1,5 +1,6 @@
 <?php
 namespace LFPhp\PDODSN\Database;
+
 use Exception;
 use LFPhp\PDODSN\DSN;
 
@@ -21,7 +22,7 @@ class URI extends DSN {
 		throw new Exception("File no detected in uri:$segment");
 	}
 
-	protected static function getDSNPrefix(){
+	public static function getDSNPrefix(){
 		return 'uri';
 	}
 

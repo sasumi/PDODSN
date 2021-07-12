@@ -1,5 +1,6 @@
 <?php
 namespace LFPhp\PDODSN\Database;
+
 use Exception;
 use LFPhp\PDODSN\DSN;
 
@@ -13,7 +14,7 @@ class ODBC extends DSN {
 	public $database_file;
 	public $protocol;
 
-	protected static function getDSNPrefix(){
+	public static function getDSNPrefix(){
 		return 'odbc';
 	}
 
@@ -22,7 +23,7 @@ class ODBC extends DSN {
 	 * @return \LFPhp\PDODSN\Database\ODBC
 	 * @throws \Exception
 	 */
-	protected static function resolveSegment($segment){
+	public static function resolveSegment($segment){
 		if(preg_match('/^\w+$/', $segment, $matches)){
 			$str = ini_get("pdo.dsn.{$matches[1]}");
 			return static::resolveString($str);

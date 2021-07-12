@@ -11,7 +11,7 @@ use LFPhp\PDODSN\Database\URI;
 /**
  * 数据库配置对象
  */
-abstract class DSN {
+abstract class DSN implements ResolverInterface {
 	public $type;
 
 	const DRIVER_LIST = [
@@ -24,9 +24,6 @@ abstract class DSN {
 	public function __construct(){
 		$this->type = get_called_class();
 	}
-
-	protected abstract static function resolveSegment($segment);
-	protected abstract static function getDSNPrefix();
 
 	/**
 	 * convert to DSN string
