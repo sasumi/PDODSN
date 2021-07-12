@@ -5,7 +5,6 @@ use LFPhp\PDODSN\DSN;
 
 class MySQL extends DSN {
 	public $unix_socket;
-	public $driver;
 	public $host;
 	public $port;
 	public $database;
@@ -20,7 +19,6 @@ class MySQL extends DSN {
 	 */
 	public static function resolveSegment($segment){
 		$dsn_obj = new static();
-		$dsn_obj->driver = self::class;
 		$segments = explode(';', $segment);
 		foreach($segments as $seg){
 			list($k, $v) = explode('=', $seg);
