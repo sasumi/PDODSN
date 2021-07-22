@@ -4,7 +4,11 @@ namespace LFPhp\PDODSN\Database;
 use Exception;
 use LFPhp\PDODSN\DSN;
 
-class URI extends DSN {
+/**
+ * URI模式DSN，暂不支持实例化
+ * @package LFPhp\PDODSN\Database
+ */
+abstract class URI extends DSN {
 	/**
 	 * @param $segment
 	 * @return \LFPhp\PDODSN\Database\URI
@@ -32,5 +36,9 @@ class URI extends DSN {
 	 */
 	public function __toString(){
 		return '';
+	}
+
+	public static function getFieldMap(){
+		throw new Exception('no support yet');
 	}
 }

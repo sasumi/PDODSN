@@ -4,29 +4,27 @@ namespace LFPhp\PDODSN\Database;
 use LFPhp\PDODSN\DSN;
 
 /**
- * Class MySQL
+ * Class PostgreSQL
  * @package LFPhp\PDODSN\Database
- * @property string $unix_socket
  * @property string $host
  * @property string $port
  * @property string $database
  * @property string $user
  * @property string $password
- * @property string $charset
+ * @example $dsn_str = 'pgsql:host=localhost;port=5432;dbname=testdb;user=bruce;password=mypass';
  */
-class MySQL extends DSN {
+class PostgreSQL extends DSN {
 	public static function getDSNPrefix(){
-		return 'mysql';
+		return 'pgsql';
 	}
 
 	public static function getFieldMap(){
 		return [
-			'unix_socket' => 'unix_socket',
-			'host'        => 'host',
-			'port'        => 'port',
-			'charset'     => 'charset',
-			'user'        => 'user',
-			'password'    => 'password',
+			'host'     => 'host',
+			'port'     => 'port',
+			'database' => 'dbname',
+			'user'     => 'user',
+			'password' => 'password',
 		];
 	}
 }
