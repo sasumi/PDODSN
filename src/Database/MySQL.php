@@ -19,6 +19,18 @@ class MySQL extends DSN {
 		return 'mysql';
 	}
 
+	/**
+	 * fix charset dashes
+	 * @param $name
+	 * @param $value
+	 */
+	public function __set($name, $value){
+		if(strcasecmp($name, 'charset') === 0){
+			$value = str_replace('-', '', $value);
+		}
+		parent::__set($name, $value);
+	}
+
 	public static function getFieldMap(){
 		return [
 			'unix_socket' => 'unix_socket',
