@@ -87,7 +87,7 @@ abstract class DSN implements DNSInterface {
 			$p = static::getDSNPrefix().':';
 			$comma = '';
 			foreach($field_map as $k => $field){
-				if(isset($this->{$k})){
+				if($this->{$k}){
 					$p .= $comma."$field=".$this->{$k};
 					$comma = ';';
 				}
