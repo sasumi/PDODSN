@@ -2,6 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
+use PDO;
 
 /**
  * Class PostgreSQL
@@ -18,7 +19,7 @@ class PostgreSQL extends DSN {
 		return 'pgsql';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		return [
 			'host'     => 'host',
 			'port'     => 'port',
@@ -26,5 +27,9 @@ class PostgreSQL extends DSN {
 			'user'     => 'user',
 			'password' => 'password',
 		];
+	}
+
+	public function pdoConnect(array $ext_option = []){
+		return new PDO($this->__toString(), $this->user, $this->password);
 	}
 }

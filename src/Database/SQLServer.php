@@ -2,6 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
+use PDO;
 
 /**
  * Class SQLServer
@@ -20,13 +21,14 @@ use LFPhp\PDODSN\DSN;
  * @property string $transaction_isolation
  * @property string $trust_server_certificate
  * @property string $wsid
+ * @property int $attr_query_timeout 查询超时时间
  */
 class SQLServer extends DSN {
 	public static function getDSNPrefix(){
 		return 'sqlsrv';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		return [
 			'app'                         => 'APP',
 			'server'                      => 'Server',
@@ -43,5 +45,12 @@ class SQLServer extends DSN {
 			'trust_server_certificate'    => 'TrustServerCertificate',
 			'wsid'                        => 'WSID',
 		];
+	}
+
+	public function pdoConnect(array $ext_option = []){
+		if($this->attr_query_timeout){
+			$ext_option[PDO::SQLSRV_ATTR_QUERY_TIMEOUT] = $this->attr_query_timeout;
+		}
+		return new PDO($this->__toString(), '', '', $ext_option);
 	}
 }

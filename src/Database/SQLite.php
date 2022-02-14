@@ -3,6 +3,7 @@ namespace LFPhp\PDODSN\Database;
 
 use Exception;
 use LFPhp\PDODSN\DSN;
+use PDO;
 
 /**
  * Class SQLite
@@ -42,7 +43,11 @@ class SQLite extends DSN {
 		return $dsn_str.':';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		return [];
+	}
+
+	public function pdoConnect(array $ext_option = []){
+		return new PDO($this->__toString(), null, null, $ext_option);
 	}
 }

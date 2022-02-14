@@ -2,6 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
+use PDO;
 
 /**
  * Class ODBC
@@ -20,7 +21,7 @@ class ODBC extends DSN {
 		return 'odbc';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		return [
 			'driver'        => 'DRIVER',
 			'host'          => 'HOSTNAME',
@@ -31,5 +32,9 @@ class ODBC extends DSN {
 			'password'      => 'PWD',
 			'database_file' => 'Dbq',
 		];
+	}
+
+	public function pdoConnect(array $ext_option = []){
+		return new PDO($this->__toString(), $this->user, $this->password, $ext_option);
 	}
 }

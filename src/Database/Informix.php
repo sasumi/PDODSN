@@ -2,6 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
+use PDO;
 
 /**
  * Class Informix
@@ -23,7 +24,7 @@ class Informix extends DSN {
 		return 'informix';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		return [
 			'host'                      => 'host',
 			'server'                    => 'server',
@@ -34,5 +35,9 @@ class Informix extends DSN {
 			'protocol'                  => 'protocol',
 			'enable_scrollable_cursors' => 'EnableScrollableCursors',
 		];
+	}
+
+	public function pdoConnect(array $ext_option = []){
+		return new PDO($this->__toString(), $this->user, $this->password);
 	}
 }

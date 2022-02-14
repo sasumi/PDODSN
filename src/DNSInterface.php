@@ -14,9 +14,10 @@ interface DNSInterface {
 	public static function resolveSegment($segment);
 
 	/**
+	 * field map to DSN fragments
 	 * @return array
 	 */
-	public static function getFieldMap();
+	public static function getAttrDSNSegMap();
 
 	/**
 	 * 获取DSN模块前缀

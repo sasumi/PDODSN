@@ -11,6 +11,7 @@ use LFPhp\PDODSN\Database\PostgreSQL;
 use LFPhp\PDODSN\Database\SQLite;
 use LFPhp\PDODSN\Database\SQLServer;
 use LFPhp\PDODSN\Database\URI;
+use PDO;
 use function LFPhp\Func\explode_by;
 
 /**
@@ -50,23 +51,30 @@ abstract class DSN implements DNSInterface {
 	}
 
 	/**
-	 * @param $segment
+	 * PDO连接
+	 * @param array $ext_option
+	 * @return PDO
+	 */
+	abstract public function pdoConnect(array $ext_option = []);
+
+	/**
+	 * @param string $segment
 	 * @return \LFPhp\PDODSN\DSN
 	 * @throws \Exception
 	 */
 	public static function resolveSegment($segment){
-		$field_map = static::getFieldMap();
+		$field_map = static::getAttrDSNSegMap();
 		if(!$field_map){
-			throw new Exception("No field map return");
+			throw new Exception("No attribute-dsn seg map define.");
 		}
 		$dsn_obj = new static();
 		$segments = explode_by(';', $segment);
 		foreach($segments as $seg){
 			list($k, $v) = explode_by('=', $seg);
 			$found = false;
-			foreach($field_map as $field => $m){
-				if(strcasecmp($m, $k) === 0){
-					$dsn_obj->{$field} = $v;
+			foreach($field_map as $attr => $dsn_seg){
+				if(strcasecmp($dsn_seg, $k) === 0){
+					$dsn_obj->{$attr} = $v;
 					$found = true;
 				}
 			}
@@ -82,19 +90,50 @@ abstract class DSN implements DNSInterface {
 	 * @return string
 	 */
 	public function __toString(){
-		$field_map = static::getFieldMap();
+		$field_map = static::getAttrDSNSegMap();
 		if($field_map){
 			$p = static::getDSNPrefix().':';
 			$comma = '';
-			foreach($field_map as $k => $field){
-				if($this->{$k}){
-					$p .= $comma."$field=".$this->{$k};
+			foreach($field_map as $attr => $dsn_seg){
+				if($this->{$attr}){
+					$p .= $comma."$dsn_seg=".$this->{$attr};
 					$comma = ';';
 				}
 			}
 			return $p;
 		}
 		return null;
+	}
+
+	/**
+	 * DSN constructor.
+	 * @param $config
+	 * @throws \Exception
+	 */
+	public function __construct($config = []){
+		$class = get_called_class();
+		if($class == self::class){
+			throw new Exception('Method no callable via DSN.');
+		}
+		if(!$config){
+			return;
+		}
+		$attrs = array_keys(static::getAttrDSNSegMap());
+		foreach($attrs as $attr){
+			if(isset($config[$attr])){
+				$this->{$attr} = $config[$attr];
+			}
+		}
+	}
+
+	/**
+	 * 从数组中解析出DSN对象，该方法需要在子类中调用。
+	 * @param array $config
+	 * @return static
+	 * @throws \Exception
+	 */
+	public static function resolveArray($config){
+		return new static($config);
 	}
 
 	/**

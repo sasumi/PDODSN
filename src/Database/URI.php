@@ -38,7 +38,7 @@ abstract class URI extends DSN {
 		return '';
 	}
 
-	public static function getFieldMap(){
+	public static function getAttrDSNSegMap(){
 		throw new Exception('no support yet');
 	}
 }
