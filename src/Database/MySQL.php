@@ -66,4 +66,16 @@ class MySQL extends DSN {
 		}
 		return $conn;
 	}
+
+	/**
+	 * 兼容MySQL charset表达式
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function __set($name, $value){
+		if($name === 'charset'){
+			$value = str_replace('-', '', $value);
+		}
+		return parent::__set($name, $value);
+	}
 }

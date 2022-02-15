@@ -2,6 +2,7 @@
 
 namespace LFPhp\PDODSN;
 
+use ArrayAccess;
 use Exception;
 use LFPhp\PDODSN\Database\Firebird;
 use LFPhp\PDODSN\Database\Informix;
@@ -17,7 +18,7 @@ use function LFPhp\Func\explode_by;
 /**
  * 数据库配置对象
  */
-abstract class DSN implements DNSInterface {
+abstract class DSN implements DNSInterface, ArrayAccess {
 	protected $values = [];
 
 	/** @var DSN[] */
@@ -151,5 +152,21 @@ abstract class DSN implements DNSInterface {
 			}
 		}
 		throw new Exception("No driver found:$dsn_str");
+	}
+
+	public function offsetExists($offset){
+		return isset($this->{$offset});
+	}
+
+	public function offsetGet($offset){
+		return $this->{$offset};
+	}
+
+	public function offsetSet($offset, $value){
+		$this->__set($offset, $value);
+	}
+
+	public function offsetUnset($offset){
+		$this->{$offset} = null;
 	}
 }

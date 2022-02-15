@@ -9,7 +9,8 @@ use PDO;
  * Class SQLite
  * @package LFPhp\PDODSN\Database
  * @example $dsn = "sqlite:/opt/databases/mydb.sq3";
- * @example $dsn = "isqlite::memory:";
+ * @example $dsn = "sqlite::memory:";
+ * @property string $database SQLite数据库不需要database
  */
 class SQLite extends DSN {
 	private $file = '';
