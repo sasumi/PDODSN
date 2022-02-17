@@ -19,6 +19,8 @@ use function LFPhp\Func\explode_by;
  * 数据库配置对象
  */
 abstract class DSN implements DNSInterface, ArrayAccess {
+	/** @var bool|null 是否设置严格模式，null表示不进行设置 */
+	public $strict_mode = null;
 	protected $values = [];
 
 	/** @var DSN[] */

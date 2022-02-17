@@ -21,6 +21,9 @@ use function LFPhp\Func\server_in_windows;
  * @property string $charset
  */
 class MySQL extends DSN {
+	//默认关闭严格模式
+	public $strict_mode = false;
+
 	public static function getDSNPrefix(){
 		return 'mysql';
 	}
@@ -53,9 +56,10 @@ class MySQL extends DSN {
 		if($this->persist){
 			$opt[PDO::ATTR_PERSISTENT] = true;
 		}
+
 		//connect & process windows encode issue
 		try {
-			$conn = new PDO($this->__toString(), $this->user, $this->password, array_merge($opt, $ext_option));
+			$conn = new PDO($this->__toString(), $this->user, $this->password, array_replace($opt, $ext_option));
 		} catch(PDOException $e){
 			if(server_in_windows()){
 				//convert gbk message to utf8
