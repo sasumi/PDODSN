@@ -1,8 +1,8 @@
 <?php
 namespace LFPhp\PDODSN\Database;
 
-use Exception;
 use LFPhp\PDODSN\DSN;
+use LFPhp\PDODSN\Exception\DsnException;
 use PDO;
 
 /**
@@ -27,7 +27,7 @@ class SQLite extends DSN {
 			return $dsn_obj;
 		}
 		if(!is_file($segment)){
-			throw new Exception("Database file no exists:$segment");
+			throw new DsnException("Database file no exists:$segment");
 		}
 		$dsn_obj->file = $segment;
 		return $dsn_obj;

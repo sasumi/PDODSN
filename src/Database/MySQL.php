@@ -2,6 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
+use LFPhp\PDODSN\Exception\ConnectException;
 use PDO;
 use PDOException;
 use function LFPhp\Func\get_max_socket_timeout;
@@ -44,6 +45,7 @@ class MySQL extends DSN {
 	 * PDO连接
 	 * @param array $ext_option
 	 * @return \PDO
+	 * @throws \LFPhp\PDODSN\Exception\ConnectException
 	 */
 	public function pdoConnect(array $ext_option = []){
 		$max_connect_timeout = isset($this->connect_timeout) ? $this->connect_timeout : get_max_socket_timeout(2);
@@ -63,9 +65,9 @@ class MySQL extends DSN {
 		} catch(PDOException $e){
 			if(server_in_windows()){
 				//convert gbk message to utf8
-				throw new PDOException(mb_convert_encoding($e->getMessage(), 'utf-8', 'gbk'), $e->getCode(), $e->getPrevious());
+				throw new ConnectException(mb_convert_encoding($e->getMessage(), 'utf-8', 'gbk'), ['dsn'=>$this]);
 			} else {
-				throw $e;
+				throw new ConnectException($e->getMessage(), ['dsn'=>$this]);
 			}
 		}
 		return $conn;

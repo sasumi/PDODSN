@@ -1,8 +1,8 @@
 <?php
 namespace LFPhp\PDODSN\Database;
 
-use Exception;
 use LFPhp\PDODSN\DSN;
+use LFPhp\PDODSN\Exception\DsnException;
 
 /**
  * URI模式DSN，暂不支持实例化
@@ -18,12 +18,12 @@ abstract class URI extends DSN {
 		if(preg_match('/^file:\/\/(.*)$/i', $segment, $matches)){
 			$file = $matches[1];
 			if(!is_file($file)){
-				throw new Exception("DSN resolve fail, file no exists:$segment");
+				throw new DsnException("DSN resolve fail, file no exists:$segment");
 			}
 			$str = trim(file_get_contents($file));
 			return static::resolveString($str);
 		}
-		throw new Exception("File no detected in uri:$segment");
+		throw new DsnException("File no detected in uri:$segment");
 	}
 
 	public static function getDSNPrefix(){
@@ -38,7 +38,11 @@ abstract class URI extends DSN {
 		return '';
 	}
 
+	/**
+	 * @return array|void
+	 * @throws \LFPhp\PDODSN\Exception\DsnException
+	 */
 	public static function getAttrDSNSegMap(){
-		throw new Exception('no support yet');
+		throw new DsnException('no support yet');
 	}
 }

@@ -3,7 +3,6 @@
 namespace LFPhp\PDODSN;
 
 use ArrayAccess;
-use Exception;
 use LFPhp\PDODSN\Database\Firebird;
 use LFPhp\PDODSN\Database\Informix;
 use LFPhp\PDODSN\Database\MySQL;
@@ -12,6 +11,7 @@ use LFPhp\PDODSN\Database\PostgreSQL;
 use LFPhp\PDODSN\Database\SQLite;
 use LFPhp\PDODSN\Database\SQLServer;
 use LFPhp\PDODSN\Database\URI;
+use LFPhp\PDODSN\Exception\DsnException;
 use PDO;
 use function LFPhp\Func\explode_by;
 
@@ -68,7 +68,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	public static function resolveSegment($segment){
 		$field_map = static::getAttrDSNSegMap();
 		if(!$field_map){
-			throw new Exception("No attribute-dsn seg map define.");
+			throw new DsnException("No attribute-dsn seg map define.");
 		}
 		$dsn_obj = new static();
 		$segments = explode_by(';', $segment);
@@ -82,7 +82,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 				}
 			}
 			if(!$found){
-				throw new Exception("DSN key no supported: $seg");
+				throw new DsnException("DSN key no supported: $seg");
 			}
 		}
 		return $dsn_obj;
@@ -116,7 +116,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	public function __construct($config = []){
 		$class = get_called_class();
 		if($class == self::class){
-			throw new Exception('Method no callable via DSN.');
+			throw new DsnException('Method no callable via DSN.');
 		}
 		if(!$config){
 			return;
@@ -153,7 +153,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 				}
 			}
 		}
-		throw new Exception("No driver found:$dsn_str");
+		throw new DsnException("No driver found:$dsn_str");
 	}
 
 	public function offsetExists($offset){
