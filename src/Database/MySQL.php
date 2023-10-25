@@ -5,15 +5,12 @@ use LFPhp\PDODSN\DSN;
 use LFPhp\PDODSN\Exception\ConnectException;
 use PDO;
 use PDOException;
-use function LFPhp\Func\get_max_socket_timeout;
 use function LFPhp\Func\server_in_windows;
 
 /**
  * Class MySQL
  * @package LFPhp\PDODSN\Database
  * @property string $unix_socket
- * @property int $connect_timeout
- * @property bool $persist
  * @property string $host
  * @property string $port
  * @property string $database
@@ -22,9 +19,6 @@ use function LFPhp\Func\server_in_windows;
  * @property string $charset
  */
 class MySQL extends DSN {
-	//默认关闭严格模式
-	public $strict_mode = false;
-
 	public static function getDSNPrefix(){
 		return 'mysql';
 	}
@@ -48,27 +42,14 @@ class MySQL extends DSN {
 	 * @throws \LFPhp\PDODSN\Exception\ConnectException
 	 */
 	public function pdoConnect(array $ext_option = []){
-		$max_connect_timeout = isset($this->connect_timeout) ? $this->connect_timeout : get_max_socket_timeout(2);
-		$opt = [
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-		];
-		if($max_connect_timeout){
-			$opt[PDO::ATTR_TIMEOUT] = $max_connect_timeout;
-		}
-		if($this->persist){
-			$opt[PDO::ATTR_PERSISTENT] = true;
-		}
-
-		//connect & process windows encode issue
-		try {
-			$conn = new PDO($this->__toString(), $this->user, $this->password, array_replace($opt, $ext_option));
-		} catch(PDOException $e){
+		try{
+			$conn = new PDO($this->__toString(), $this->user, $this->password, $this->getPdoOption($ext_option));
+		}catch(PDOException $e){
 			if(server_in_windows()){
 				//convert gbk message to utf8
-				throw new ConnectException(mb_convert_encoding($e->getMessage(), 'utf-8', 'gbk'), ['dsn'=>$this]);
-			} else {
-				throw new ConnectException($e->getMessage(), ['dsn'=>$this]);
+				throw new ConnectException(mb_convert_encoding($e->getMessage(), 'utf-8', 'gbk'), ['dsn' => $this]);
 			}
+			throw new ConnectException($e->getMessage(), ['dsn' => $this]);
 		}
 		return $conn;
 	}

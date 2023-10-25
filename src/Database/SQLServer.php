@@ -51,6 +51,6 @@ class SQLServer extends DSN {
 		if($this->attr_query_timeout){
 			$ext_option[PDO::SQLSRV_ATTR_QUERY_TIMEOUT] = $this->attr_query_timeout;
 		}
-		return new PDO($this->__toString(), '', '', $ext_option);
+		return new PDO($this->__toString(), '', '', $this->getPdoOption($ext_option));
 	}
 }

@@ -14,13 +14,14 @@ use LFPhp\PDODSN\Database\URI;
 use LFPhp\PDODSN\Exception\DsnException;
 use PDO;
 use function LFPhp\Func\explode_by;
+use function LFPhp\Func\get_max_socket_timeout;
 
 /**
  * 数据库配置对象
  */
 abstract class DSN implements DNSInterface, ArrayAccess {
-	/** @var bool|null 是否设置严格模式，null表示不进行设置 */
-	public $strict_mode = null;
+	public $persist = false; //是否长连接
+	public $connect_timeout = null; //超时时间
 	protected $values = [];
 
 	/** @var DSN[] */
@@ -61,6 +62,28 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	abstract public function pdoConnect(array $ext_option = []);
 
 	/**
+	 * 获取PDO配置
+	 * @param array $ext_option 优先配置
+	 * @return array PDO 配置数组
+	 */
+	protected function getPdoOption($ext_option = []){
+		$max_connect_timeout = isset($this->connect_timeout) ? $this->connect_timeout : get_max_socket_timeout(2);
+		$pdo_option = [
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+		];
+		if($max_connect_timeout){
+			$pdo_option[PDO::ATTR_TIMEOUT] = $max_connect_timeout;
+		}
+		if($this->persist){
+			$pdo_option[PDO::ATTR_PERSISTENT] = true;
+		}
+		foreach($ext_option as $f=>$v){
+			$pdo_option[$f] = $v;
+		}
+		return $pdo_option;
+	}
+
+	/**
 	 * @param string $segment
 	 * @return \LFPhp\PDODSN\DSN
 	 * @throws \Exception
@@ -89,7 +112,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	}
 
 	/**
-	 * 生成DSN字符串
+	 * 生成DSN字符串，只取 DSN SEG MAP中支持属性
 	 * @return string
 	 */
 	public function __toString(){
@@ -121,11 +144,10 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 		if(!$config){
 			return;
 		}
-		$attrs = array_keys(static::getAttrDSNSegMap());
-		foreach($attrs as $attr){
-			if(isset($config[$attr])){
-				$this->{$attr} = $config[$attr];
-			}
+		// 不需要按照 DSN定义设置，额外支持更多属性控制
+		// $attrs = array_keys(static::getAttrDSNSegMap());
+		foreach($config as $attr=>$val){
+			$this->{$attr} = $val;
 		}
 	}
 

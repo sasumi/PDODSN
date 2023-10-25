@@ -29,6 +29,6 @@ class Firebird extends DSN {
 	}
 
 	public function pdoConnect(array $ext_option = []){
-		return new PDO($this->__toString(), $this->user, $this->password);
+		return new PDO($this->__toString(), $this->user, $this->password, $this->getPdoOption($ext_option));
 	}
 }

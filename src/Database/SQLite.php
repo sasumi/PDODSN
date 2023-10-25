@@ -49,6 +49,6 @@ class SQLite extends DSN {
 	}
 
 	public function pdoConnect(array $ext_option = []){
-		return new PDO($this->__toString(), null, null, $ext_option);
+		return new PDO($this->__toString(), null, null, $this->getPdoOption($ext_option));
 	}
 }
