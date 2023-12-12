@@ -45,6 +45,10 @@ class MySQL extends DSN {
 	public function pdoConnect(array $ext_option = []){
 		try{
 			$conn = new PDO($this->__toString(), $this->user, $this->password, $this->getPdoOption($ext_option));
+			//这里不能使用 isset，isset不会触发 __get 方法
+			if($this->strict_mode !== null){
+				self::toggleStrictMode($conn, !!$this->strict_mode);
+			}
 		}catch(PDOException $e){
 			if(server_in_windows()){
 				//convert gbk message to utf8
@@ -56,6 +60,19 @@ class MySQL extends DSN {
 	}
 
 	/**
+	 * 普通模式、严格模式切换
+	 * @param bool $to_strict 是否切换到严格模式
+	 */
+	public static function toggleStrictMode($conn, $to_strict = false){
+		if($to_strict){
+			$sql = "SET session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'";
+		}else{
+			$sql = "SET sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'";
+		}
+		$conn->query($sql);
+	}
+
+	/**
 	 * 兼容MySQL charset表达式
 	 * @param string $name
 	 * @param mixed $value
@@ -64,6 +81,6 @@ class MySQL extends DSN {
 		if($name === 'charset'){
 			$value = str_replace('-', '', $value);
 		}
-		return parent::__set($name, $value);
+		parent::__set($name, $value);
 	}
 }
