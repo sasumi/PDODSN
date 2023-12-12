@@ -10,6 +10,7 @@ use function LFPhp\Func\server_in_windows;
 /**
  * Class MySQL
  * @package LFPhp\PDODSN\Database
+ * @property bool $strict_mode 是否以严格模式处理SQL
  * @property string $unix_socket
  * @property string $host
  * @property string $port
