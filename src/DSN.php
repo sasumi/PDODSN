@@ -22,6 +22,7 @@ use function LFPhp\Func\get_max_socket_timeout;
 abstract class DSN implements DNSInterface, ArrayAccess {
 	public $persist = false; //是否长连接
 	public $connect_timeout = null; //超时时间
+	public $max_reconnect_count = 0; //最大重新连接次数
 	protected $values = [];
 
 	/** @var DSN[] */
