@@ -21,7 +21,7 @@ use PDO;
  * @property string $transaction_isolation
  * @property string $trust_server_certificate
  * @property string $wsid
- * @property int $attr_query_timeout 查询超时时间
+ * @property int $attr_query_timeout query timeout
  */
 class SQLServer extends DSN {
 	public static function getDSNPrefix(){

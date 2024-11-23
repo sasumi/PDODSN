@@ -17,12 +17,12 @@ use function LFPhp\Func\explode_by;
 use function LFPhp\Func\get_max_socket_timeout;
 
 /**
- * 数据库配置对象
+ * DSN Class
  */
 abstract class DSN implements DNSInterface, ArrayAccess {
-	public $persist = false; //是否长连接
-	public $connect_timeout = null; //超时时间
-	public $max_reconnect_count = 0; //最大重新连接次数
+	public $persist = false; //persist connect
+	public $connect_timeout = null; //connect timeout
+	public $max_reconnect_count = 0; //max reconnect count
 	protected $values = [];
 
 	/** @var DSN[] */
@@ -63,11 +63,11 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	abstract public function pdoConnect(array $ext_option = []);
 
 	/**
-	 * 获取PDO配置
-	 * @param array $ext_option 优先配置
-	 * @return array PDO 配置数组
+	 * get PDO option
+	 * @param array $ext_option Priority configuration
+	 * @return array PDO configuration array
 	 */
-	protected function getPdoOption($ext_option = []){
+	protected function getPdoOption(array $ext_option = []){
 		$max_connect_timeout = isset($this->connect_timeout) ? $this->connect_timeout : get_max_socket_timeout(2);
 		$pdo_option = [
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -113,7 +113,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	}
 
 	/**
-	 * 生成DSN字符串，只取 DSN SEG MAP中支持属性
+	 * Generate a DSN string and only take the supported attributes in the DSN SEG MAP
 	 * @return string
 	 */
 	public function __toString(){
@@ -134,10 +134,10 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 
 	/**
 	 * DSN constructor.
-	 * @param $config
+	 * @param array $config
 	 * @throws \Exception
 	 */
-	public function __construct($config = []){
+	public function __construct(array $config = []){
 		$class = get_called_class();
 		if($class == self::class){
 			throw new DsnException('Method no callable via DSN.');
@@ -145,7 +145,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 		if(!$config){
 			return;
 		}
-		// 不需要按照 DSN定义设置，额外支持更多属性控制
+		// No need to set according to DSN definition, additionally supports more attribute control
 		// $attrs = array_keys(static::getAttrDSNSegMap());
 		foreach($config as $attr=>$val){
 			$this->{$attr} = $val;
@@ -153,17 +153,17 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	}
 
 	/**
-	 * 从数组中解析出DSN对象，该方法需要在子类中调用。
+	 * Parse the DSN object from the array. This method needs to be called in the subclass.
 	 * @param array $config
 	 * @return static
 	 * @throws \Exception
 	 */
-	public static function resolveArray($config){
+	public static function resolveArray(array $config){
 		return new static($config);
 	}
 
 	/**
-	 * 解析DSN字符串
+	 * resolve DSN string to DSN Object
 	 * @param $dsn_str
 	 * @return static
 	 * @throws \Exception

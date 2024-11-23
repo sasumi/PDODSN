@@ -5,7 +5,7 @@ use LFPhp\PDODSN\DSN;
 use LFPhp\PDODSN\Exception\DsnException;
 
 /**
- * URI模式DSN，暂不支持实例化
+ * URI
  * @package LFPhp\PDODSN\Database
  */
 abstract class URI extends DSN {

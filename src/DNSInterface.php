@@ -7,7 +7,7 @@ namespace LFPhp\PDODSN;
  */
 interface DNSInterface {
 	/**
-	 * 解析子块
+	 * resolve dsn string segment
 	 * @param string $segment
 	 * @return static
 	 */
@@ -20,7 +20,7 @@ interface DNSInterface {
 	public static function getAttrDSNSegMap();
 
 	/**
-	 * 获取DSN模块前缀
+	 * get DSN prefix
 	 * @return string
 	 */
 	public static function getDSNPrefix();

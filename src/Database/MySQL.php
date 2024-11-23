@@ -10,7 +10,7 @@ use function LFPhp\Func\server_in_windows;
 /**
  * Class MySQL
  * @package LFPhp\PDODSN\Database
- * @property bool $strict_mode 是否以严格模式处理SQL
+ * @property bool $strict_mode Whether to process SQL in strict mode
  * @property string $unix_socket
  * @property string $host
  * @property string $port
@@ -37,7 +37,7 @@ class MySQL extends DSN {
 	}
 
 	/**
-	 * PDO连接
+	 * PDO connect
 	 * @param array $ext_option
 	 * @return \PDO
 	 * @throws \LFPhp\PDODSN\Exception\ConnectException
@@ -45,7 +45,7 @@ class MySQL extends DSN {
 	public function pdoConnect(array $ext_option = []){
 		try{
 			$conn = new PDO($this->__toString(), $this->user, $this->password, $this->getPdoOption($ext_option));
-			//这里不能使用 isset，isset不会触发 __get 方法
+			//isset cannot be used here, isset will not trigger the __get method
 			if($this->strict_mode !== null){
 				self::toggleStrictMode($conn, !!$this->strict_mode);
 			}
@@ -60,8 +60,8 @@ class MySQL extends DSN {
 	}
 
 	/**
-	 * 普通模式、严格模式切换
-	 * @param bool $to_strict 是否切换到严格模式
+	 * Switch between normal mode and strict mode
+	 * @param bool $to_strict
 	 */
 	public static function toggleStrictMode($conn, $to_strict = false){
 		if($to_strict){
@@ -94,7 +94,7 @@ class MySQL extends DSN {
 	}
 
 	/**
-	 * 兼容MySQL charset表达式
+	 * Compatible with MySQL charset expressions
 	 * @param string $name
 	 * @param mixed $value
 	 */
