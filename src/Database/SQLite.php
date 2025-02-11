@@ -33,7 +33,7 @@ class SQLite extends DSN {
 		return $dsn_obj;
 	}
 
-	public function __toString($protected_fields = []){
+	public function __toString(){
 		$dsn_str = self::getDSNPrefix();
 		if($this->memory){
 			return $dsn_str.':memory:';

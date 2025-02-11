@@ -34,7 +34,7 @@ abstract class URI extends DSN {
 	 * @return string;
 	 * @throws \Exception
 	 */
-	public function __toString($protected_fields = []){
+	public function __toString(){
 		return '';
 	}
 

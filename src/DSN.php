@@ -117,7 +117,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param string[] $protected_fields
 	 * @return string
 	 */
-	public function __toString($protected_fields = ['password', 'psw', 'secret']){
+	public function toStringSafe(array $protected_fields = ['password', 'psw', 'secret']){
 		$field_map = static::getAttrDSNSegMap();
 		if($field_map){
 			$p = static::getDSNPrefix().':';
@@ -131,7 +131,11 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 			}
 			return $p;
 		}
-		return null;
+		return '';
+	}
+
+	public function __toString(){
+		$this->toStringSafe([]);
 	}
 
 	/**
