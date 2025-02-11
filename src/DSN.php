@@ -135,7 +135,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	}
 
 	public function __toString(){
-		$this->toStringSafe([]);
+		return $this->toStringSafe([]);
 	}
 
 	/**
