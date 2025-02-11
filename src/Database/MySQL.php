@@ -73,27 +73,6 @@ class MySQL extends DSN {
 	}
 
 	/**
-	 * protect password
-	 * @return string|null
-	 */
-	public function __toString(){
-		$field_map = static::getAttrDSNSegMap();
-		if($field_map){
-			$p = static::getDSNPrefix().':';
-			$comma = '';
-			foreach($field_map as $attr => $dsn_seg){
-				if($this->{$attr}){
-					$v = $dsn_seg === 'password' ? '*******' : $this->{$attr};
-					$p .= $comma."$dsn_seg=".$v;
-					$comma = ';';
-				}
-			}
-			return $p;
-		}
-		return null;
-	}
-
-	/**
 	 * Compatible with MySQL charset expressions
 	 * @param string $name
 	 * @param mixed $value

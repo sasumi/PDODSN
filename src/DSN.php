@@ -11,7 +11,7 @@ use LFPhp\PDODSN\Database\PostgreSQL;
 use LFPhp\PDODSN\Database\SQLite;
 use LFPhp\PDODSN\Database\SQLServer;
 use LFPhp\PDODSN\Database\URI;
-use LFPhp\PDODSN\Exception\DsnException;
+use LFPhp\PDODSN\Exception\DSNException;
 use PDO;
 use function LFPhp\Func\explode_by;
 use function LFPhp\Func\get_max_socket_timeout;
@@ -68,7 +68,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @return array PDO configuration array
 	 */
 	protected function getPdoOption(array $ext_option = []){
-		$max_connect_timeout = isset($this->connect_timeout) ? $this->connect_timeout : get_max_socket_timeout(2);
+		$max_connect_timeout = $this->connect_timeout ?? get_max_socket_timeout(2);
 		$pdo_option = [
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 		];
@@ -92,12 +92,12 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	public static function resolveSegment($segment){
 		$field_map = static::getAttrDSNSegMap();
 		if(!$field_map){
-			throw new DsnException("No attribute-dsn seg map define.");
+			throw new DSNException("No attribute-dsn seg map define.");
 		}
 		$dsn_obj = new static();
 		$segments = explode_by(';', $segment);
 		foreach($segments as $seg){
-			list($k, $v) = explode_by('=', $seg);
+			[$k, $v] = explode_by('=', $seg);
 			$found = false;
 			foreach($field_map as $attr => $dsn_seg){
 				if(strcasecmp($dsn_seg, $k) === 0){
@@ -106,7 +106,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 				}
 			}
 			if(!$found){
-				throw new DsnException("DSN key no supported: $seg");
+				throw new DSNException("DSN key no supported: $seg");
 			}
 		}
 		return $dsn_obj;
@@ -114,16 +114,18 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 
 	/**
 	 * Generate a DSN string and only take the supported attributes in the DSN SEG MAP
+	 * @param string[] $protected_fields
 	 * @return string
 	 */
-	public function __toString(){
+	public function __toString($protected_fields = ['password', 'psw', 'secret']){
 		$field_map = static::getAttrDSNSegMap();
 		if($field_map){
 			$p = static::getDSNPrefix().':';
 			$comma = '';
 			foreach($field_map as $attr => $dsn_seg){
 				if($this->{$attr}){
-					$p .= $comma."$dsn_seg=".$this->{$attr};
+					$val = in_array($attr, $protected_fields) ? '******' : $this->{$attr};
+					$p .= $comma."$dsn_seg=$val";
 					$comma = ';';
 				}
 			}
@@ -140,7 +142,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	public function __construct(array $config = []){
 		$class = get_called_class();
 		if($class == self::class){
-			throw new DsnException('Method no callable via DSN.');
+			throw new DSNException('Method no callable via DSN.');
 		}
 		if(!$config){
 			return;
@@ -176,7 +178,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 				}
 			}
 		}
-		throw new DsnException("No driver found:$dsn_str");
+		throw new DSNException("No driver found:$dsn_str");
 	}
 
 	public function offsetExists($offset){

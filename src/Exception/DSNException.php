@@ -3,7 +3,7 @@ namespace LFPhp\PDODSN\Exception;
 
 use Exception;
 
-class DsnException extends Exception {
+class DSNException extends Exception {
 	public $dsn = null;
 
 	public function __construct($message = "", $data = []){

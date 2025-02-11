@@ -2,7 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
-use LFPhp\PDODSN\Exception\DsnException;
+use LFPhp\PDODSN\Exception\DSNException;
 
 /**
  * URI
@@ -18,12 +18,12 @@ abstract class URI extends DSN {
 		if(preg_match('/^file:\/\/(.*)$/i', $segment, $matches)){
 			$file = $matches[1];
 			if(!is_file($file)){
-				throw new DsnException("DSN resolve fail, file no exists:$segment");
+				throw new DSNException("DSN resolve fail, file no exists:$segment");
 			}
 			$str = trim(file_get_contents($file));
 			return static::resolveString($str);
 		}
-		throw new DsnException("File no detected in uri:$segment");
+		throw new DSNException("File no detected in uri:$segment");
 	}
 
 	public static function getDSNPrefix(){
@@ -34,15 +34,15 @@ abstract class URI extends DSN {
 	 * @return string;
 	 * @throws \Exception
 	 */
-	public function __toString(){
+	public function __toString($protected_fields = []){
 		return '';
 	}
 
 	/**
 	 * @return array|void
-	 * @throws \LFPhp\PDODSN\Exception\DsnException
+	 * @throws \LFPhp\PDODSN\Exception\DSNException
 	 */
 	public static function getAttrDSNSegMap(){
-		throw new DsnException('no support yet');
+		throw new DSNException('no support yet');
 	}
 }

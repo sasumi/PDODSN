@@ -2,7 +2,7 @@
 namespace LFPhp\PDODSN\Database;
 
 use LFPhp\PDODSN\DSN;
-use LFPhp\PDODSN\Exception\DsnException;
+use LFPhp\PDODSN\Exception\DSNException;
 use PDO;
 
 /**
@@ -10,7 +10,7 @@ use PDO;
  * @package LFPhp\PDODSN\Database
  * @example $dsn = "sqlite:/opt/databases/mydb.sq3";
  * @example $dsn = "sqlite::memory:";
- * @property string $database SQLite数据库不需要database
+ * @property string $database SQLite no require [database]
  */
 class SQLite extends DSN {
 	private $file = '';
@@ -27,13 +27,13 @@ class SQLite extends DSN {
 			return $dsn_obj;
 		}
 		if(!is_file($segment)){
-			throw new DsnException("Database file no exists:$segment");
+			throw new DSNException("Database file no exists:$segment");
 		}
 		$dsn_obj->file = $segment;
 		return $dsn_obj;
 	}
 
-	public function __toString(){
+	public function __toString($protected_fields = []){
 		$dsn_str = self::getDSNPrefix();
 		if($this->memory){
 			return $dsn_str.':memory:';
