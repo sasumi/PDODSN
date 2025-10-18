@@ -42,7 +42,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param $name
 	 * @param $value
 	 */
-	public function __set($name, $value){
+	public function __set($name, $value) {
 		$this->values[$name] = $value;
 	}
 
@@ -51,8 +51,8 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param $name
 	 * @return mixed
 	 */
-	public function __get($name){
-		return $this->values[$name];
+	public function __get($name) {
+		return isset($this->values[$name]) ? $this->values[$name] : null;
 	}
 
 	/**
@@ -67,18 +67,18 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param array $ext_option Priority configuration
 	 * @return array PDO configuration array
 	 */
-	protected function getPdoOption(array $ext_option = []){
+	protected function getPdoOption(array $ext_option = []) {
 		$max_connect_timeout = $this->connect_timeout ?? get_max_socket_timeout(2);
 		$pdo_option = [
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 		];
-		if($max_connect_timeout){
+		if ($max_connect_timeout) {
 			$pdo_option[PDO::ATTR_TIMEOUT] = $max_connect_timeout;
 		}
-		if($this->persist){
+		if ($this->persist) {
 			$pdo_option[PDO::ATTR_PERSISTENT] = true;
 		}
-		foreach($ext_option as $f=>$v){
+		foreach ($ext_option as $f => $v) {
 			$pdo_option[$f] = $v;
 		}
 		return $pdo_option;
@@ -89,23 +89,23 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @return \LFPhp\PDODSN\DSN
 	 * @throws \Exception
 	 */
-	public static function resolveSegment($segment){
+	public static function resolveSegment($segment) {
 		$field_map = static::getAttrDSNSegMap();
-		if(!$field_map){
+		if (!$field_map) {
 			throw new DSNException("No attribute-dsn seg map define.");
 		}
 		$dsn_obj = new static();
 		$segments = explode_by(';', $segment);
-		foreach($segments as $seg){
+		foreach ($segments as $seg) {
 			[$k, $v] = explode_by('=', $seg);
 			$found = false;
-			foreach($field_map as $attr => $dsn_seg){
-				if(strcasecmp($dsn_seg, $k) === 0){
+			foreach ($field_map as $attr => $dsn_seg) {
+				if (strcasecmp($dsn_seg, $k) === 0) {
 					$dsn_obj->{$attr} = $v;
 					$found = true;
 				}
 			}
-			if(!$found){
+			if (!$found) {
 				throw new DSNException("DSN key no supported: $seg");
 			}
 		}
@@ -117,15 +117,15 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param string[] $protected_fields
 	 * @return string
 	 */
-	public function toStringSafe(array $protected_fields = ['password', 'psw', 'secret']){
+	public function toStringSafe(array $protected_fields = ['password', 'psw', 'secret']) {
 		$field_map = static::getAttrDSNSegMap();
-		if($field_map){
-			$p = static::getDSNPrefix().':';
+		if ($field_map) {
+			$p = static::getDSNPrefix() . ':';
 			$comma = '';
-			foreach($field_map as $attr => $dsn_seg){
-				if($this->{$attr}){
+			foreach ($field_map as $attr => $dsn_seg) {
+				if ($this->{$attr}) {
 					$val = in_array($attr, $protected_fields) ? '******' : $this->{$attr};
-					$p .= $comma."$dsn_seg=$val";
+					$p .= $comma . "$dsn_seg=$val";
 					$comma = ';';
 				}
 			}
@@ -134,7 +134,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 		return '';
 	}
 
-	public function __toString(){
+	public function __toString() {
 		return $this->toStringSafe([]);
 	}
 
@@ -143,17 +143,17 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @param array $config
 	 * @throws \Exception
 	 */
-	public function __construct(array $config = []){
+	public function __construct(array $config = []) {
 		$class = get_called_class();
-		if($class == self::class){
+		if ($class == self::class) {
 			throw new DSNException('Method no callable via DSN.');
 		}
-		if(!$config){
+		if (!$config) {
 			return;
 		}
 		// No need to set according to DSN definition, additionally supports more attribute control
 		// $attrs = array_keys(static::getAttrDSNSegMap());
-		foreach($config as $attr=>$val){
+		foreach ($config as $attr => $val) {
 			$this->{$attr} = $val;
 		}
 	}
@@ -164,7 +164,7 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @return static
 	 * @throws \Exception
 	 */
-	public static function resolveArray(array $config){
+	public static function resolveArray(array $config) {
 		return new static($config);
 	}
 
@@ -174,10 +174,10 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 	 * @return static
 	 * @throws \Exception
 	 */
-	public static function resolveString($dsn_str){
-		if(preg_match('/^(\w+):(.+)$/i', $dsn_str, $matches)){
-			foreach(self::DRIVER_LIST as $driver){
-				if(strcasecmp($driver::getDSNPrefix(), $matches[1]) === 0){
+	public static function resolveString($dsn_str) {
+		if (preg_match('/^(\w+):(.+)$/i', $dsn_str, $matches)) {
+			foreach (self::DRIVER_LIST as $driver) {
+				if (strcasecmp($driver::getDSNPrefix(), $matches[1]) === 0) {
 					return $driver::resolveSegment($matches[2]);
 				}
 			}
@@ -185,19 +185,19 @@ abstract class DSN implements DNSInterface, ArrayAccess {
 		throw new DSNException("No driver found:$dsn_str");
 	}
 
-	public function offsetExists($offset){
+	public function offsetExists($offset): bool {
 		return isset($this->{$offset});
 	}
 
-	public function offsetGet($offset){
+	public function offsetGet($offset): mixed {
 		return $this->{$offset};
 	}
 
-	public function offsetSet($offset, $value){
+	public function offsetSet($offset, $value): void {
 		$this->__set($offset, $value);
 	}
 
-	public function offsetUnset($offset){
+	public function offsetUnset($offset): void {
 		$this->{$offset} = null;
 	}
 }
